@@ -44,7 +44,7 @@ Le but de ce tutoriel est de découvrir react en construisant une application.
 navigateur client ne le permet pas encore
 
 5. Créer un fichier _babel.config.json_ et entrer :
-   ```
+   ```json
    {
       "presets": [
          ["@babel/preset-env", 
@@ -66,7 +66,7 @@ _Alternatives :_ gulp makefiles, parcel, rollup
 
 6. Créer un fichier _webpack.config.js_ et entrer :
 
-```
+```ts
 const path = require('path');
    module.exports = { 
       entry: './src/index.tsx',
@@ -101,7 +101,7 @@ filename: 'arolla-react-example.bundle.js'` = le bundle nommé _arolla-react-exa
 
 8. Créer un fichier _index.html_, ajouter au moins une balise avec un id et une balise script pointant vers le bundle
 
- ```
+ ```html
  <div id="projet"></div>
    <script src="./dist/arolla-react-example.bundle.js"></script>
  ```
@@ -112,7 +112,7 @@ filename: 'arolla-react-example.bundle.js'` = le bundle nommé _arolla-react-exa
 
 9. Dans le _package.json_, ajouter une ligne dans scripts `"build": "webpack"` :
 
-```
+```json
 {
   "name": "arolla",
   "version": "1.0.0",
@@ -148,7 +148,7 @@ filename: 'arolla-react-example.bundle.js'` = le bundle nommé _arolla-react-exa
 
 10. Définir un port : Ajouter une ligne dans le _webpack.config.js_ entre output et resolve
 
-``` 
+```js 
    devServer: {
       port: 5500,
    },
@@ -156,10 +156,10 @@ filename: 'arolla-react-example.bundle.js'` = le bundle nommé _arolla-react-exa
 
 11. Ajouter une ligne dans le _package.json_
 
-``` 
+```json 
 "scripts" {
-  "serve": "webpack serve --mode=development",
-  ...
+  "serve": "webpack serve --mode=development"
+
   }
 ``` 
 
@@ -170,7 +170,7 @@ filename: 'arolla-react-example.bundle.js'` = le bundle nommé _arolla-react-exa
 12. Créer un répertoire _src_
 13. Dedans, ajouter un fichier _App.tsx_ et entrer :
 
-```
+```tsx
 import React from 'react';
 
 const App : React.FC = () => (
@@ -185,7 +185,7 @@ export default App;
 
 14. et un fichier _index.tsx_  et entrer :
 
-  ```
+  ```tsx
   import React from 'react';
   import ReactDom from 'react-dom';
   import App from './App';
