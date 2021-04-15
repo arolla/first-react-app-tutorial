@@ -7,6 +7,9 @@
     * [Configuration pour faire démarrer l'application](#step1d)
     * [Démarrer l'application](#step1e)    
     * [Réglages de problèmes mineurs d'imports incorrects (facultatif)](#step1f)
+* [2 - Créer un composant](#step2)
+    * [En tant que fonction](#step2a)
+    * [En tant que classe](#step2b)
 
 
 Le but de ce tutoriel est de découvrir react en construisant une application.
@@ -107,9 +110,6 @@ filename: 'arolla-react-example.bundle.js'` = le bundle nommé _arolla-react-exa
  ```
 ℹ Le div#projet est destiné à contenir l'application
 
-
-
-
 9. Dans le _package.json_, ajouter une ligne dans scripts `"build": "webpack"` :
 
 ```json
@@ -194,9 +194,7 @@ const container = document.getElementById('projet');
 ReactDom.render(<App/>,  container);
 ```  
 
-
-
-ℹ Ce sera le fichier principal du projet comme l'indique la ligne ` "main": "index.js" ` du _package.json_ 
+ℹ Ce sera le fichier principal du projet comme l'indique la ligne ` "main": "index.js" ` du _package.json_
 et `entry: './src/index.tsx',` _dans webpack.config.js_.
 
 ℹ Le container ici est la balise ajoutée dans _index.html_.
@@ -214,12 +212,125 @@ et `entry: './src/index.tsx',` _dans webpack.config.js_.
     👉 cela créera un fichier _tsconfig.json_ (ou bien créez-le)
     
 19. Mettre la ligne à true :
-        `"esModuleInterop": true,  `
+    `"esModuleInterop": true,  `
+
+# <a name="step2"> </a>🧩 Etape 2 : Créer un composant
+
+Nous allons créer une liste (de choses à faire, de challenges, d'ingrédients de cuisine...selon votre humeur), soit 2
+composants :
+
+* un formulaire pour ajouter un élément à la liste
+* un composant pour afficher la liste
+
+1. Créer un répertoire _todolist_
+2. Dedans, créer un fichier _ItemCreationComponent.tsx_ : le formulaire d'ajout
+3. Dedans, créer un fichier _ListDisplayComponent.tsx_ : la liste affichée
+
+Voici les deux manières de faire, en faire un composant de chaque style :
+
+##  <a name="step2a"> </a> En tant que fonction
+
+4. Créer une nouvelle fonction dans le fichier _ItemCreationComponent.tsx_ :
+
+  ```
+    const ItemCreationComponent = () => { };
+ ```
+
+5. ...qui retourne le html du formulaire :
+
+  ```
+    import React from 'react';
+    
+    const ItemCreationComponent: React.FC = ()  => {
+
+        return  (<form id="todolist">
+                    <label htmlFor="item">Je dois faire : </label>
+                    <input type="text" name="item"></input>
+                    <button type="submit"> ok </button>
+                </form>);
+        };
+    }
+
+ ```
+
+6. ...et l'exporter :
+
+  ```  
+    export default ItemCreationComponent;
+  ```
+
+7. ...puis l'importer dans le composant principal _App.tsx_ (créé à l'étape 1) :
+
+  ```  
+  import React from 'react';
+  import ItemCreationComponent from './todolist/ItemCreationComponent';
+  
+    const App : React.FC = () => (
+       <ItemCreationComponent/>
+    );
+  ```
+
+8. Lancer l'application [comment faire ?](#start-app)
+
+## En tant que classe  <a name="step2b"> </a>
+
+9. Créer une nouvelle classe dans le fichier _ListDisplayComponent.tsx_ :
+
+  ```
+    class ListDisplayComponent  {
+       ....
+    }  
+ ```
+
+10. ...qui étend l'interface React.Component et implémente la fonction render()  :
+
+  ```
+    import React from 'react';
+    
+    class ListDisplayComponent extends React.Component {
+        render() {
+            return <div id="listOfItems"> 
+                        emplacement pour ma future liste
+                   </div>;
+        };
+    }
+
+ ```
+
+11. ...et l'exporter :
+
+  ```  
+    export default ListDisplayComponent;
+  ```
+
+12. ...puis l'importer dans le composant principal _App.tsx_ (créé à l'étape 1) :
+
+  ```  
+  import React from 'react';
+  import ItemCreationComponent from './todolist/ItemCreationComponent';
+  import ListDisplayComponent from './todolist/ListDisplayComponent';
+  
+    const App : React.FC = () => (
+         <div>
+            <ItemCreationComponent/>
+            <ListDisplayComponent/>
+         </div>
+    );
+  ```
+
+13. Lancer l'application  [comment faire ?](#start-app)
+    👉 Vous devez voir apparaître vos deux composants.
+
+## Pour terminer
+Les deux composants que vous avez créés ne sont pas fonctionnels. 
+Nous allons voir dans la prochaine étape comment ajouter du comportement aux composants 
+et les faire communiquer entre eux.
 
 
 
 
+    
 
-
+   
 
 
