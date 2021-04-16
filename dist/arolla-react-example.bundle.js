@@ -13,11 +13,71 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
 /* harmony export */ });
 /* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! react */ "./node_modules/react/index.js");
+/* harmony import */ var _todolist_ItemCreationComponent__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./todolist/ItemCreationComponent */ "./src/todolist/ItemCreationComponent.tsx");
+/* harmony import */ var _todolist_ListDisplayComponent__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./todolist/ListDisplayComponent */ "./src/todolist/ListDisplayComponent.tsx");
 
 
-const App = () => /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("div", null, "Hello !");
+
+
+const App = () => /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("div", null, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(_todolist_ItemCreationComponent__WEBPACK_IMPORTED_MODULE_1__.default, null), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(_todolist_ListDisplayComponent__WEBPACK_IMPORTED_MODULE_2__.default, null));
 
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (App);
+
+/***/ }),
+
+/***/ "./src/todolist/ItemCreationComponent.tsx":
+/*!************************************************!*\
+  !*** ./src/todolist/ItemCreationComponent.tsx ***!
+  \************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! react */ "./node_modules/react/index.js");
+
+
+const ItemCreationComponent = () => {
+  return /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("form", {
+    id: "todolist"
+  }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("label", {
+    htmlFor: "item"
+  }, "Je dois faire : "), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("input", {
+    type: "text",
+    name: "item"
+  }), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("button", {
+    type: "submit"
+  }, " ok"));
+};
+
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (ItemCreationComponent);
+
+/***/ }),
+
+/***/ "./src/todolist/ListDisplayComponent.tsx":
+/*!***********************************************!*\
+  !*** ./src/todolist/ListDisplayComponent.tsx ***!
+  \***********************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! react */ "./node_modules/react/index.js");
+
+
+class ListDisplayComponent extends react__WEBPACK_IMPORTED_MODULE_0__.Component {
+  render() {
+    return /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("div", {
+      id: "listOfItems"
+    }, "emplacement pour ma future liste");
+  }
+
+}
+
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (ListDisplayComponent);
 
 /***/ }),
 

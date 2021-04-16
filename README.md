@@ -232,13 +232,13 @@ Voici les deux manières de faire, en faire un composant de chaque style :
 
 4. Créer une nouvelle fonction dans le fichier _ItemCreationComponent.tsx_ :
 
-  ```
+  ```tsx
     const ItemCreationComponent = () => { };
  ```
 
 5. ...qui retourne le html du formulaire :
 
-  ```
+  ```tsx
     import React from 'react';
     
     const ItemCreationComponent: React.FC = ()  => {
@@ -255,13 +255,13 @@ Voici les deux manières de faire, en faire un composant de chaque style :
 
 6. ...et l'exporter :
 
-  ```  
+  ```tsx  
     export default ItemCreationComponent;
   ```
 
 7. ...puis l'importer dans le composant principal _App.tsx_ (créé à l'étape 1) :
 
-  ```  
+  ```tsx  
   import React from 'react';
   import ItemCreationComponent from './todolist/ItemCreationComponent';
   
@@ -276,15 +276,15 @@ Voici les deux manières de faire, en faire un composant de chaque style :
 
 9. Créer une nouvelle classe dans le fichier _ListDisplayComponent.tsx_ :
 
-  ```
+  ```tsx
     class ListDisplayComponent  {
-       ....
+      // ....
     }  
  ```
 
 10. ...qui étend l'interface React.Component et implémente la fonction render()  :
 
-  ```
+  ```tsx
     import React from 'react';
     
     class ListDisplayComponent extends React.Component {
@@ -299,13 +299,13 @@ Voici les deux manières de faire, en faire un composant de chaque style :
 
 11. ...et l'exporter :
 
-  ```  
+  ```tsx  
     export default ListDisplayComponent;
   ```
 
 12. ...puis l'importer dans le composant principal _App.tsx_ (créé à l'étape 1) :
 
-  ```  
+  ```tsx  
   import React from 'react';
   import ItemCreationComponent from './todolist/ItemCreationComponent';
   import ListDisplayComponent from './todolist/ListDisplayComponent';
