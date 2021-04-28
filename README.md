@@ -345,13 +345,12 @@ Voici le comportement attendu :
 
 ##  <a name="step3a"> </a>📞Gestion des événements
 
-1. Ouvrir ItemCreationComponent.tsx et ajouter :
+1. Ouvrir _ItemCreationComponent.tsx_ et ajouter :
 
 * une fonction _addItem_ appelée lors de la soumission du formulaire (au clic du bouton "ok" de type submit) (_onSubmit_)
 * une fonction _setItemValue_ appelée lorsque la valeur du champ change (_onChange_)
 
-Ces deux méthodes ont un paramètre implicite _
-event_ ([interface Event](https://developer.mozilla.org/en-US/docs/Web/API/Event)). Il représente les événements
+Ces deux méthodes ont un paramètre implicite _event_ ([interface Event](https://developer.mozilla.org/en-US/docs/Web/API/Event)). Il représente les événements
 déclenchés dans le navigateur tels que les clics ou les soumissions de formulaire.
 
 **a. Si vous avez créé ce composant en tant que fonction**
@@ -375,7 +374,7 @@ déclenchés dans le navigateur tels que les clics ou les soumissions de formula
 
     export default ItemCreationComponent;
 
-   ```
+   ``` 
 
 ℹ `event.preventDefault()` est présent dans notre exemple pour éviter de réellement soumettre le formulaire, ce qui
 aurait pour effet de rafraîchir la page et de remettre notre liste à l'état initial (vide). En effet, dans notre
@@ -489,7 +488,7 @@ class ItemCreationComponent extends React.Component<{}, State>  {
              this.setState({item : fieldValue});
          }
      };
-       // ...
+        //...
 }
 ```
 
@@ -506,7 +505,7 @@ Le _hook_ _useState_ :
 * permet de définir l'état initial
 * renvoie l'état local (ici _state_) et la méthode pour le mettre à jour (ici _setState_)
 
-```ts
+```tsx
    import React, { useState } from 'react'; 
       
    interface State {
