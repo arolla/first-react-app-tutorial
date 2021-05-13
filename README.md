@@ -746,3 +746,91 @@ auxquels s'ajoute la nouvelle valeur _userEntry.item_.
 
    👉 Les composants sont maintenant opérationnels. 
    Les entrées du formulaire sont affichées dans une liste en dessous.
+
+# Tutoriel 2 - React + Redux
+
+* [1 - Communication entre composants - 2 : au travers d'un état global](#step4)
+    * [Configurer un store](#step4a)
+
+# <a name="step4"> </a> 📧 Etape 1 : Communication entre composants - 2 : au travers d'un état global
+
+👨‍👩‍👧‍👦 À mesure qu'une application grossit, le nombre de ses composants devient conséquent et
+leur hiérarchie en vient à comporter plusieurs niveaux de profondeur. 
+La communication entre composants parent/enfant ou entre composants-frères  devient fastidieuse et complexe à orchestrer.
+
+Une solution peut être de **maintenir un état global des données à partager entre les composants** en ayant recours à un _store_.
+ 
+## <a name="step4a"> </a> 🗄️ Configurer un store
+
+Le _store_ va garder l'état des variables nécessaires à plus d'un composant à jour.
+À chaque mise à jour de l'une d'entre elles, tous les composants reliés 
+au store qui utilisent cette variable auront accès à sa nouvelle valeur.
+
+1. Installer le _store_ _[redux.js](https://redux.js.org/)_ `npm install <nom_module>`
+* react-redux
+* redux  
+* @types/react-redux
+* redux-thunk
+
+2. Créer un fichier _ToDoReducer.ts_ dans un répertoire _src/reducers_
+```ts
+import { Reducer } from 'redux';
+const ToDoReducer: Reducer = (state, action) => {
+    return state;
+};
+
+export default ToDoReducer;
+```
+ℹ un _reducer_ a pour paramètres l'état courant de l'application (_state_) 
+et une action requise sur cet état (comme une mise à jour)(_action_). 
+Les changements de l'état demandés seront implémentés dedans : le nouvel état (_state_) est ensuite renvoyé.
+
+3. Créer un fichier _Store.ts_ dans /src
+```ts
+import { createStore } from 'redux';
+import { ToDoReducer } from './reducers/ToDoReducer';
+
+const store = createStore(ToDoReducer);
+
+export default store;
+``` 
+ℹ un _store_ est créé avec au moins un _reducer_ associé. 
+
+Il est possible d'avoir plusieurs _stores_ et plusieurs _reducers_.
+Il est important de bien réfléchir avant de prendre la décision de découper.
+[Dois-je créer des stores multiples ?](https://redux.js.org/faq/store-setup#can-or-should-i-create-multiple-stores-can-i-import-my-store-directly-and-use-it-in-components-myself).
+
+Voici un exemple avec deux reducers : un pour une todolist et un pour un système de gestion d'utilisateurs :
+```ts 
+import { AnyAction, combineReducers, createStore, Store } from 'redux';
+
+export type AppState = {todos: string[], users: UserModel[]};
+// on combine les reducers
+const rootReducer = combineReducers({todos: todoReducer, users: userReducer}); 
+// et la combinaison est fournie au store
+const store: Store<AppState, AnyAction> = createStore(rootReducer);
+``` 
+[documentation de combineReducers >>](https://redux.js.org/api/combinereducers)
+
+4. Ouvrir Index.tsx :
+
+```tsx
+  //...
+    import { Provider } from 'react-redux';
+    import store from './Store';
+
+    const container = document.getElementById('projet');
+    
+    // cette ligne remplace ReactDom.render(<App/>,  container);
+    ReactDom.render(
+     <Provider store={store}>
+        <App />
+        </Provider>,
+        container
+    )
+
+```
+ℹ Maintenant nous avons configuré un _store_ au dessus du composant racine. 
+Les composants devront s'y connecter pour l'utiliser.
+
+à suivre...
