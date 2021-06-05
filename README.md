@@ -751,6 +751,7 @@ auxquels s'ajoute la nouvelle valeur _userEntry.item_.
 
 * [1 - Communication entre composants - 2 : au travers d'un état global](#step4)
     * [Configurer un store](#step4a)
+    * [Ecrire un reducer pour les actions de la todo list](#step4b)
 
 # <a name="step4"> </a> 📧 Etape 1 : Communication entre composants - 2 : au travers d'un état global
 
@@ -833,4 +834,77 @@ const store: Store<AppState, AnyAction> = createStore(rootReducer);
 ℹ Maintenant nous avons configuré un _store_ au dessus du composant racine. 
 Les composants devront s'y connecter pour l'utiliser.
 
-à suivre...
+## <a name="step4b"> </a> 🧙  Ecrire un reducer pour les actions de la todo list
+
+5. Créer un fichier _ToDoListActions.ts_  pour y définir les actions possibles sur la liste.
+Y ajouter la possibilité d'une action d'ajout d'un élément dans la liste.
+   Cette action sera identifiable via l'étiquette 'ADD_TO_DO' et aura un paramètre _todo_, 
+   une chaîne de caractères qui représente l'élément à ajouter à la liste.
+```tsx
+import { Action } from "redux";
+
+export type ADD_TO_DO = 'ADD_TO_DO';
+
+export type AddTodoAction = {
+    todo: string
+} & Action<ADD_TO_DO>;
+
+
+const addTodo = (todo: string): AddTodoAction => ({
+    type: 'ADD_TO_DO',
+    todo
+});
+
+export default  {addTodo};
+
+```
+ℹ En typescript, le mot clé _type_ permet de définir des alias pour des types afin de les réutiliser.
+
+ℹ _&_ permet de créer un type à partir de deux types : 
+
+celui qui a cette structure :
+```ts
+{
+    todo: string
+}
+```
+ ET _Action<ADD_TO_DO>_ qui correspond  l'interface suivante
+```ts
+export interface Action<T = any> {
+    type: T
+}
+```
+s'ajoutent pour former le type _AddTodoAction_. La constante _addTodo_ est de type _AddTodoAction_
+
+5. Compléter le fichier _ToDoReducer.ts_ comme suit pour ajouter un élément donné dans la liste 
+   stockée dans le _store_ :
+```tsx
+import { Reducer } from 'redux';
+import {AddTodoAction} from './ToDoListActions';
+
+const initialState = { todos: [] };
+
+export const ToDoReducer: Reducer<string[], AddTodoAction> = (state = initialState.todos, action) => {
+    switch (action.type) {
+        case 'ADD_TO_DO':
+            return [...state, action.todo];
+        default:
+            return state;
+    }
+ 
+};
+```
+ℹ  Cette syntaxe `(state = initialState.todos)` dans le cas d'un paramètre d'entrée sert à assigner une valeur par défaut.
+On va stocker dans le store la liste des choses à faire (_todos_).
+A l'état initial, la liste est vide `const initialState = { todos: [] };`.
+
+ℹ Lorsque le reducer reçoit une _action_ un nouvel état du store est retourné.
+Si c'est une action de type _ADD_TO_DO_, il est renvoyé une nouvelle liste contenant
+le nouvel élément ajouté. Cette syntaxe (_spread operator_)`[...state, action.todo];`
+permet de créer la nouvelle liste à partir d'une copie de l'ancienne. 
+Cela garantit que Les données sont _immuables_. Cela rend les modifications apportées sur le dom plus prévisibles 
+et évite les effets de bords. Contrairement aux objets ou aux arrays, les types primitifs (boolean, string, number..) en javaScript sont _immuables_ .
+[>> comprendre l'intérêt des données immuables](https://redux.js.org/faq/immutable-data#what-are-the-benefits-of-immutability)
+
+
+...en cours...
