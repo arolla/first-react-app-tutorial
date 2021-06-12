@@ -19,9 +19,7 @@
 
 Le but de ce tutoriel est de découvrir react en construisant une application.
 
-
-
-#  <a name="step1"> </a> 🏗️ Etape 1 : Démarrer un nouveau projet react
+# <a name="step1"> </a> 🏗️ Etape 1 : Démarrer un nouveau projet react
 
 ℹ️ Ce tutoriel n'utilise pas de solution automatique telle que _create-react-app_ (https://fr.reactjs.org/docs/create-a-new-react-app.html).
 
@@ -94,8 +92,9 @@ const path = require('path');
    } 
 };
 ```
-ℹ `path: path.resolve(__dirname, 'dist'),
-filename: 'arolla-react-example.bundle.js'` = le bundle nommé _arolla-react-example.bundle.js_ sera dans le répertoire _dist_
+
+ℹ `path: path.resolve(__dirname, 'dist'), filename: 'arolla-react-example.bundle.js'` = le bundle nommé _
+arolla-react-example.bundle.js_ sera dans le répertoire _dist_
 
 ℹ `resolve: { extensions: ['.js', '.ts', '.tsx']}` = extensions de fichiers acceptées .js, .ts, .tsx
 
@@ -752,28 +751,32 @@ auxquels s'ajoute la nouvelle valeur _userEntry.item_.
 * [1 - Communication entre composants - 2 : au travers d'un état global](#step4)
     * [Configurer un store](#step4a)
     * [Ecrire un reducer pour les actions de la todo list](#step4b)
+    * [Connecter un composant au store](#step4c)
+    * [Aide au débogage Redux dev tool ](#step4d)
 
 # <a name="step4"> </a> 📧 Etape 1 : Communication entre composants - 2 : au travers d'un état global
 
-👨‍👩‍👧‍👦 À mesure qu'une application grossit, le nombre de ses composants devient conséquent et
-leur hiérarchie en vient à comporter plusieurs niveaux de profondeur. 
-La communication entre composants parent/enfant ou entre composants-frères  devient fastidieuse et complexe à orchestrer.
+👨‍👩‍👧‍👦 À mesure qu'une application grossit, le nombre de ses composants devient conséquent et leur hiérarchie en
+vient à comporter plusieurs niveaux de profondeur. La communication entre composants parent/enfant ou entre
+composants-frères devient fastidieuse et complexe à orchestrer.
 
-Une solution peut être de **maintenir un état global des données à partager entre les composants** en ayant recours à un _store_.
- 
+Une solution peut être de **maintenir un état global des données à partager entre les composants** en ayant recours à
+un _store_.
+
 ## <a name="step4a"> </a> 🗄️ Configurer un store
 
-Le _store_ va garder l'état des variables nécessaires à plus d'un composant à jour.
-À chaque mise à jour de l'une d'entre elles, tous les composants reliés 
-au store qui utilisent cette variable auront accès à sa nouvelle valeur.
+Le _store_ va garder l'état des variables nécessaires à plus d'un composant à jour. À chaque mise à jour de l'une d'
+entre elles, tous les composants reliés au store qui utilisent cette variable auront accès à sa nouvelle valeur.
 
 1. Installer le _store_ _[redux.js](https://redux.js.org/)_ `npm install <nom_module>`
+
 * react-redux
-* redux  
+* redux
 * @types/react-redux
 * redux-thunk
 
 2. Créer un fichier _ToDoReducer.ts_ dans un répertoire _src/reducers_
+
 ```ts
 import { Reducer } from 'redux';
 const ToDoReducer: Reducer = (state, action) => {
@@ -817,31 +820,32 @@ const store: Store<AppState, AnyAction> = createStore(rootReducer);
 
 ```tsx
   //...
-    import { Provider } from 'react-redux';
-    import store from './Store';
+import {Provider} from 'react-redux';
+import store from './Store';
 
-    const container = document.getElementById('projet');
-    
-    // cette ligne remplace ReactDom.render(<App/>,  container);
-    ReactDom.render(
-     <Provider store={store}>
-        <App />
-        </Provider>,
-        container
-    )
+const container = document.getElementById('projet');
+
+// cette ligne remplace ReactDom.render(<App/>,  container);
+ReactDom.render(
+    <Provider store={store}>
+        <App/>
+    </Provider>,
+    container
+)
 
 ```
-ℹ Maintenant nous avons configuré un _store_ au dessus du composant racine. 
-Les composants devront s'y connecter pour l'utiliser.
+
+ℹ Maintenant nous avons configuré un _store_ au dessus du composant racine. Les composants devront s'y connecter pour l'
+utiliser.
 
 ## <a name="step4b"> </a> 🧙  Ecrire un reducer pour les actions de la todo list
 
-5. Créer un fichier _ToDoListActions.ts_  pour y définir les actions possibles sur la liste.
-Y ajouter la possibilité d'une action d'ajout d'un élément dans la liste.
-   Cette action sera identifiable via l'étiquette 'ADD_TO_DO' et aura un paramètre _todo_, 
-   une chaîne de caractères qui représente l'élément à ajouter à la liste.
+5. Créer un fichier _ToDoListActions.ts_  pour y définir les actions possibles sur la liste. Y ajouter la possibilité
+   d'une action d'ajout d'un élément dans la liste. Cette action sera identifiable via l'étiquette 'ADD_TO_DO' et aura
+   un paramètre _todo_, une chaîne de caractères qui représente l'élément à ajouter à la liste.
+
 ```tsx
-import { Action } from "redux";
+import {Action} from "redux";
 
 export type ADD_TO_DO = 'ADD_TO_DO';
 
@@ -855,31 +859,37 @@ const addTodo = (todo: string): AddTodoAction => ({
     todo
 });
 
-export default  {addTodo};
+export default {addTodo};
 
 ```
+
 ℹ En typescript, le mot clé _type_ permet de définir des alias pour des types afin de les réutiliser.
 
-ℹ _&_ permet de créer un type à partir de deux types : 
+ℹ _&_ permet de créer un type à partir de deux types :
 
 celui qui a cette structure :
+
 ```ts
 {
     todo: string
 }
 ```
- ET _Action<ADD_TO_DO>_ qui correspond  l'interface suivante
+
+ET _Action<ADD_TO_DO>_ qui correspond l'interface suivante
+
 ```ts
 export interface Action<T = any> {
     type: T
 }
 ```
+
 s'ajoutent pour former le type _AddTodoAction_. La constante _addTodo_ est de type _AddTodoAction_
 
-5. Compléter le fichier _ToDoReducer.ts_ comme suit pour ajouter un élément donné dans la liste 
-   stockée dans le _store_ :
+5. Compléter le fichier _ToDoReducer.ts_ comme suit pour ajouter un élément donné dans la liste stockée dans le _
+   store_ :
+
 ```tsx
-import { Reducer } from 'redux';
+import {Reducer} from 'redux';
 import {AddTodoAction} from './ToDoListActions';
 
 const initialState = { todos: [] };
@@ -891,7 +901,7 @@ export const ToDoReducer: Reducer<string[], AddTodoAction> = (state = initialSta
         default:
             return state;
     }
- 
+
 };
 ```
 ℹ  Cette syntaxe `(state = initialState.todos)` dans le cas d'un paramètre d'entrée sert à assigner une valeur par défaut.
@@ -906,5 +916,155 @@ Cela garantit que Les données sont _immuables_. Cela rend les modifications app
 et évite les effets de bords. Contrairement aux objets ou aux arrays, les types primitifs (boolean, string, number..) en javaScript sont _immuables_ .
 [>> comprendre l'intérêt des données immuables](https://redux.js.org/faq/immutable-data#what-are-the-benefits-of-immutability)
 
+## <a name="step4c"> </a> 🔌 Connecter un composant au store
 
-...en cours...
+ℹ Les exemples ci-après sont donnés uniquement pour les composants créés en tant que fonction
+
+6. Ouvrir _Store.ts_. Définir la structure du _store_. Dans notre exemple, nous allons stocker la liste des todos.
+
+   Ajouter cette ligne :
+
+```ts
+         export type AppState = { todos: string[] };
+   ```
+
+et compléter celle-ci :
+
+```ts
+       const store: Store<AppState> = createStore(ToDoReducer);
+   ```
+
+7. Ouvrir _ListDisplayComponent.tsx_. La fonction _Connect_ permet à un composant de se connecter à un _store_ comme
+   ceci :
+
+```tsx
+ import {connect} from 'react-redux';
+
+//remplace la ligne :  export default ListDisplayComponent
+export default connect(mapStateToProps, null)(ListDisplayComponent);
+```
+
+Elle prend en paramètre le composant _ListDisplayComponent_ et en retourne un nouveau "connecté au store".
+
+Quant au paramètre **mapStateToProps** il est utile pour recevoir les mises à jour du store
+
+Le définir comme ceci :
+
+```tsx
+   import {AppState} from '../../Store';
+
+const mapStateToProps = (state: AppState) => {
+    return {
+        todos: state || []
+    }
+}
+
+```
+
+ℹ la syntaxe `state.todos || []` permet d'initialiser _todos_ avec un array vide si _state.todos_ était indéfini.
+
+8. Ouvrir _ItemCreationComponent.tsx_. Ajouter la fonction _connect_ comme ceci :
+
+```tsx
+ import {connect} from 'react-redux';
+
+//remplace la ligne :  export default ItemCreationComponent
+export default connect(null, mapDispatchToProps)(ItemCreationComponent);
+```
+
+**mapDispatchToProps** est utile pour déclencher des actions sur le store (_dispatch_)
+
+Le définir comme ceci :
+
+```tsx
+import actionsCreator from '../../reducers/ToDoListActions';
+
+const mapDispatchToProps = (dispatch) => {
+    return {
+        addItem: (todo: string) => {
+            dispatch(actionsCreator.addTodo(todo))
+        },
+    }
+}
+```
+
+🎗️ Rappel :  _addToDo_ retourne une action de cette forme :
+
+`````ts
+{
+    type: 'ADD_TO_DO'
+    todo: string
+}
+`````
+
+Cette ligne ``dispatch(actionsCreator.addTodo(todo))`` peut être vue comme un envoi de la consigne 'ADD_TO_DO'
+accompagnée de la valeur de l'élément à ajouter (_todo_).
+
+**Pour terminer,**
+
+
+* Renommer  _onAddItem_ en _addItem_ dans l'interface _Props_
+* Modifier la fonction  _onAddItem_  définie dans le tutoriel 1 
+  pour appeler _addItem_ à la soumission du formulaire comme suit (_OnSubmit_):
+
+`````tsx
+ //...
+interface Props {
+    addItem: (item: string) => void;
+}
+
+//...
+const ItemCreationComponent: React.FC<Props> = ({addItem}) => {
+    //...
+    return <form id="todolist" onSubmit={onAddItem(state, addItem)}>
+        //...
+    </form>;
+    //...
+
+    const onAddItem = (state, addItem) => (event: Event) => {
+        event.preventDefault(); //pour ne pas soumettre le formulaire et rafraichir la page
+        if(state && state.item && addItem ) {
+            addItem(state.item);
+        }
+
+    };
+}
+`````
+
+9. Enfin, ouvrir _App.tsx_. Et supprimer les lignes inutiles héritées du tutoriel 1 pour obtenir :
+
+`````tsx
+const App: React.FC = () => {
+
+    return <div>
+        <ItemCreationComponent/>
+        <ListDisplayComponent items={[]}/>
+    </div>
+};
+export default App;
+`````
+
+10. Lancer l'application  [comment faire ?](#step1e)
+    👉 Le comportement attendu est le même qu'à la fin du tutoriel 1. 
+    Les entrées du formulaire sont affichées dans une liste en dessous.
+
+
+## <a name="step4d"> </a> 🔍 Aide au débogage _Redux DevTools_
+
+_Redux DevTools_ est une extension qui permet de contrôler l'état du store directement dans le navigateur.
+
+**Voici un exemple de configuration : (pour Chrome)**
+1. Recherche  _Redux DevTools_ dans le Chrome web store et ajouter l'ajouter à son navigateur
+2. Suivre les instructions données [ici](https://github.com/zalmoxisus/redux-devtools-extension#usage)
+
+Ce qui revient à ouvrir _Store.ts_ et à ajouter 'REDUX_DEVTOOLS_EXTENSION' dans cette ligne :
+`````ts
+//...
+const store: Store<AppState> = createStore(ToDoReducer, window.__REDUX_DEVTOOLS_EXTENSION__ && window.__REDUX_DEVTOOLS_EXTENSION__());
+//...
+`````
+3. Ouvrir l'onglet _Redux_ dans les _outils de developpement_ de Chrome (ctrl + maj + i)
+pour voir les changements d'états du store
+
+![reduxdevtools.png](img-tuto/reduxdevtools.png)
+
