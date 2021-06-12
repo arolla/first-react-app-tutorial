@@ -753,6 +753,9 @@ auxquels s'ajoute la nouvelle valeur _userEntry.item_.
     * [Ecrire un reducer pour les actions de la todo list](#step4b)
     * [Connecter un composant au store](#step4c)
     * [Aide au débogage Redux dev tool ](#step4d)
+* [2 - Gérer les effets de bords ](#step5)
+    * [Le problème: Charger une liste pré-existante de manière asynchrone](#step5a)
+    * [La solution: Utiliser un middleware](#step5b)
 
 # <a name="step4"> </a> 📧 Etape 1 : Communication entre composants - 2 : au travers d'un état global
 
@@ -838,7 +841,7 @@ ReactDom.render(
 ℹ Maintenant nous avons configuré un _store_ au dessus du composant racine. Les composants devront s'y connecter pour l'
 utiliser.
 
-## <a name="step4b"> </a> 🧙  Ecrire un reducer pour les actions de la todo list
+## <a name="step4b"> </a> 🧙 Ecrire un reducer pour les actions de la todo list
 
 5. Créer un fichier _ToDoListActions.ts_  pour y définir les actions possibles sur la liste. Y ajouter la possibilité
    d'une action d'ajout d'un élément dans la liste. Cette action sera identifiable via l'étiquette 'ADD_TO_DO' et aura
@@ -1002,10 +1005,9 @@ accompagnée de la valeur de l'élément à ajouter (_todo_).
 
 **Pour terminer,**
 
-
 * Renommer  _onAddItem_ en _addItem_ dans l'interface _Props_
-* Modifier la fonction  _onAddItem_  définie dans le tutoriel 1 
-  pour appeler _addItem_ à la soumission du formulaire comme suit (_OnSubmit_):
+* Modifier la fonction  _onAddItem_  définie dans le tutoriel 1 pour appeler _addItem_ à la soumission du formulaire
+  comme suit (_OnSubmit_):
 
 `````tsx
  //...
@@ -1023,7 +1025,7 @@ const ItemCreationComponent: React.FC<Props> = ({addItem}) => {
 
     const onAddItem = (state, addItem) => (event: Event) => {
         event.preventDefault(); //pour ne pas soumettre le formulaire et rafraichir la page
-        if(state && state.item && addItem ) {
+        if (state && state.item && addItem) {
             addItem(state.item);
         }
 
@@ -1045,26 +1047,244 @@ export default App;
 `````
 
 10. Lancer l'application  [comment faire ?](#step1e)
-    👉 Le comportement attendu est le même qu'à la fin du tutoriel 1. 
-    Les entrées du formulaire sont affichées dans une liste en dessous.
-
+    👉 Le comportement attendu est le même qu'à la fin du tutoriel 1. Les entrées du formulaire sont affichées dans une
+    liste en dessous.
 
 ## <a name="step4d"> </a> 🔍 Aide au débogage _Redux DevTools_
 
 _Redux DevTools_ est une extension qui permet de contrôler l'état du store directement dans le navigateur.
 
 **Voici un exemple de configuration : (pour Chrome)**
+
 1. Recherche  _Redux DevTools_ dans le Chrome web store et ajouter l'ajouter à son navigateur
 2. Suivre les instructions données [ici](https://github.com/zalmoxisus/redux-devtools-extension#usage)
 
 Ce qui revient à ouvrir _Store.ts_ et à ajouter 'REDUX_DEVTOOLS_EXTENSION' dans cette ligne :
+
 `````ts
 //...
 const store: Store<AppState> = createStore(ToDoReducer, window.__REDUX_DEVTOOLS_EXTENSION__ && window.__REDUX_DEVTOOLS_EXTENSION__());
 //...
 `````
+
 3. Ouvrir l'onglet _Redux_ dans les _outils de developpement_ de Chrome (ctrl + maj + i)
-pour voir les changements d'états du store
+   pour voir les changements d'états du store
 
 ![reduxdevtools.png](img-tuto/reduxdevtools.png)
 
+# <a name="step5"> </a> ⏲ Etape 2 : Gérer les effets de bords
+
+
+## <a name="step5a"> </a>  🗃️ Le problème: Charger une liste pré-existante de manière asynchrone
+
+️ Dans notre exemple simplissime, la liste des choses à faire est initialement vide. Mais il arrive souvent que des
+éléments soient ajoutés à une liste déjà existante. Pour similer ce cas, nous allons charger des données depuis un
+fichier pour peupler notre liste.
+
+4. Ajouter un repertoire _resources_ et créer un fichier _myTodoList.json_ contenant une liste d'élements pour la
+   liste :
+
+```ts
+[
+    "faire la vaisselle",
+    "acheter des pommes",
+    "réparer l'étagère"
+]
+```
+
+5. Pour récupérer des données d'une ressource, nous utiliserons l'[API _fetch_](https://developer.mozilla.org/fr/docs/Web/API/Fetch_API/Using_Fetch):
+
+```ts
+    Promise < Response > fetch(entrée [, paramètres]);
+```
+
+☝  **Qu'est ce qu'une Promise ?**
+
+Pour comprendre cela, il faut d'abord comprendre ce qu'est l'**asynchronisme** (opposé au synchronisme). 
+Javascript étant essentiellement single-thread, c'est-à-dire qu'il n'y a qu'un seul fil d'exécution chargé de dérouler
+une à une les opérations planifiées, le recours à l'asynchronisme permet de différer l'exécution d'une tâche,
+à un moment où elle est le moins susceptible de causer des blocages ou des ralentissements
+entraînant une mauvaise expérience utilisateur et des problèmes de performance.
+
+Une **Promise (promesse)** représente le résultat d'une opération asynchrone éventuellement disponible dans le futur. En
+effet, cette opération peut échouer, dans ce cas il est retourné la cause de l'échec, ou réussir, dans ce cas, la valeur
+du résultat est accessible dès que la tâche est complétée.
+
+[en savoir plus sur l'asynchronisme et les promises >>](https://github.com/getify/You-Dont-Know-JS/blob/1st-ed/async%20%26%20performance/ch3.md)
+
+Dans notre exemple le code suivant pourrait être utilisé pour obtenir la liste de todos :
+
+```ts
+    // then pour obtenir le résultat d'une promise
+    // fetch() et json() renvoient toutes les deux une Promise 
+    // il y a donc une chaine d'opérations
+const todos = fetch('resources/myTodoList.json').then(result => result.json()).then(result => result);
+```
+
+Une autre syntaxe possible serait d'utiliser l'opérateur _await_, pour indiquer d'attendre la résolution de la _Promise_
+pour renvoyer son résultat.
+
+```ts
+     const response = await fetch('resources/myTodoList.json');
+     const todos = await response.json();
+```
+
+🛑✋ **Il reste cependant un obstacle: Un store Redux n'accepte pas les actions asynchrones car il n'accepte aucune action pouvant entrainer des effets de
+bords.**
+
+Les **effets de bords** ce sont tous les changements de l'état d'une application survenus en dehors de son contexte
+initial, comme par exemple, une fonction qui modifie une variable qu'elle a reçu en paramètre, un appel à une API
+externe ou encore la génération de nombres aléatoires.
+(Autrement dit, pas de changement du store en dehors de son contexte)
+
+## <a name="step5b"> </a> La solution : utiliser un middleware
+
+☝  **Que va faire le middleware ?**
+
+Le _middleware_ va intercepter la demande d'action en amont du _reducer_, réaliser une opération entrainant des effets
+de bord avant de redistribuer(_dispatch_) l'action à destination du _reducer_
+avec éventuellement le résultat de l'opération réalisée en paramètre.
+
+6. Ouvrir _Store.tsx_ et compléter comme suit pour ajouter le middleware _redux thunk_ qui va gérer la logique
+   asynchrone :
+
+```ts
+import {createStore, Store, applyMiddleware} from 'redux';
+import {ToDoReducer} from './reducers/ToDoReducer';
+import thunkMiddleware from 'redux-thunk'
+
+export type AppState = { todos: string[] };
+const enhancer = applyMiddleware(thunkMiddleware);
+const store: Store<AppState> = createStore(ToDoReducer, enhancer);
+
+export default store;
+```
+
+ℹ Un *enhancer* est un moyen d'ajouter des options de configuration du store
+
+ℹ Nous avions précédemment intégré _devTools_, voici comment faire pour le garder :
+
+a. installer _redux-devtools-extension_
+```npm install --save-dev redux-devtools-extension```
+
+b. puis configurer comme suit
+```ts
+//...
+import { composeWithDevTools } from 'redux-devtools-extension';
+//...
+const middleware = applyMiddleware(thunkMiddleware);
+const enhancers = composeWithDevTools(middleware);
+const store: Store<AppState> = createStore(ToDoReducer,  enhancers);
+//...
+```
+
+
+7. Ouvrir _AddTodoAction.tsx_ et créer un nouveau type d'action de type initialisation de liste :
+
+```ts
+// ...
+export type INIT_TO_DO_LIST = 'INIT_TO_DO_LIST' ;
+
+export type ListTodoAction = {
+    todos: string[]
+} & Action<INIT_TO_DO_LIST>;
+
+
+const fetchTodos = (): ListTodoAction => ({
+    type: 'INIT_TO_DO_LIST',
+    todos: []
+});
+
+export default  {addTodo, fetchTodos};
+```
+
+8. Ouvrir _ToDoReducer.tsx_ et ajouter la fonction fetchTodos :
+
+```ts
+// charge la liste en asynchrone
+export const fetchTodos = () => async (dispatch, getState) => {
+    const response = await fetch('resources/myTodoList.json');
+    const todos = await response.json();
+    dispatch({type: 'INIT_TO_DO_LIST', todos: todos});
+}
+```
+
+puis faire en sorte que la nouvelle action 'INIT_TO_DO_LIST' puisse être traîtée par le reducer :
+
+```ts
+import {AddTodoAction, ListTodoAction} from './ToDoListActions';
+
+ type todoActions = AddTodoAction | ListTodoAction;
+
+export const ToDoReducer: Reducer<string[], todoActions> = (state = initialState.todos, action ) => {
+    switch (action.type) {
+        case 'ADD_TO_DO':
+            return [...state, action.todo];
+        case 'INIT_TO_DO_LIST':
+            return action.todos; // renvoie la liste chargée du fichier
+        default:
+            return state;
+    }
+
+};
+
+```
+
+9. Enfin, dans le composant ListDisplayComponent.tsx compléter comme suit :
+
+Ajouter la possibilité de déclencher le chargement (_initList_)
+```ts
+import {fetchTodos} from "../../reducers/ToDoReducer";
+
+interface Props {
+    items: string[];
+    initList: (() => string[]);
+}
+
+const mapDispatchToProps = (dispatch) => {
+    return {
+        initList: () => { dispatch(fetchTodos()) }
+    }
+}
+
+const ListDisplayComponent: React.FC<Props> = ({items = [], initList }) => {
+
+//...
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(ListDisplayComponent);
+
+```
+
+
+Puis faire l'appel de la méthode dans un _hook d'effet_ :
+```ts
+//...
+const ListDisplayComponent: React.FC<Props> = ({items = [], initList }) => {
+    React.useEffect(() => {
+        initList();
+    }, []);
+
+    //...
+
+}
+```
+☝ [j'ai oublié ce qu'est un _hook_...Regarder tutoriel 1 : le hook d'état _useState_](#step3b)
+
+ℹ Le hook d'effet _useEffect_ autorise les effets de bords, 
+dans notre cas, il permet de modifier l'état de la liste après son initialisation à vide en la peuplant des valeurs du json.
+
+
+Le 1er paramètre de _useEffect_ est l'opération voulue (un _effet_).
+Le 2nd paramètre facultatif, est une liste permettant de connaitre le bon moment du déclenchement de cette opération 
+(à défaut après chaque affichage). Dans cet exemple, la liste ne sera mise à jour 
+que si l'état précédent de celle-ci est vide (`[]`).
+
+[En savoir plus sur Le hook d'effet _useEffect_ ](https://fr.reactjs.org/docs/hooks-effect.html)
+
+10. Lancer l'application  [comment faire ?](#step1e)
+
+👉 A l'affichage, la liste affiche déjà les éléments contenus dans le json. Quand on entre un nouvel élément via le formulaire, il s'ajoute à 
+la liste sans que les précédents éléments ne disparaissent.
+
+![jedoisfaire.png](img-tuto/jedoisfaire.png)
