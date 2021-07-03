@@ -12,4 +12,15 @@ const addTodo = (todo: string): AddTodoAction => ({
     todo
 });
 
-export default  {addTodo};
+export type INIT_TO_DO_LIST = 'INIT_TO_DO_LIST' ;
+export type ListTodoAction = {
+    todos: string[]
+} & Action<INIT_TO_DO_LIST>;
+
+
+const fetchTodos = (): ListTodoAction => ({
+    type: 'INIT_TO_DO_LIST',
+    todos: []
+});
+
+export default  {addTodo, fetchTodos };

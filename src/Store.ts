@@ -1,9 +1,12 @@
-import {createStore, Store} from 'redux';
+import {applyMiddleware, createStore, Store} from 'redux';
 import {ToDoReducer} from './reducers/ToDoReducer';
+import thunkMiddleware from 'redux-thunk';
+import {composeWithDevTools} from 'redux-devtools-extension';
 
 export type AppState = { todos: string[] };
-
-const store: Store<AppState> = createStore(ToDoReducer,
-    window.__REDUX_DEVTOOLS_EXTENSION__ && window.__REDUX_DEVTOOLS_EXTENSION__());
+const middleware = applyMiddleware(thunkMiddleware);
+const enhancers = composeWithDevTools(middleware);
+const store: Store<AppState> = createStore(ToDoReducer,  enhancers);
 
 export default store;
+

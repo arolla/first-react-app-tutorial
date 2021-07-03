@@ -177,11 +177,17 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
 /* harmony export */ });
-/* harmony import */ var redux__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! redux */ "./node_modules/redux/es/redux.js");
+/* harmony import */ var redux__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! redux */ "./node_modules/redux/es/redux.js");
 /* harmony import */ var _reducers_ToDoReducer__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./reducers/ToDoReducer */ "./src/reducers/ToDoReducer.ts");
+/* harmony import */ var redux_thunk__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! redux-thunk */ "./node_modules/redux-thunk/es/index.js");
+/* harmony import */ var redux_devtools_extension__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! redux-devtools-extension */ "./node_modules/redux-devtools-extension/index.js");
 
 
-const store = (0,redux__WEBPACK_IMPORTED_MODULE_1__.createStore)(_reducers_ToDoReducer__WEBPACK_IMPORTED_MODULE_0__.ToDoReducer, window.__REDUX_DEVTOOLS_EXTENSION__ && window.__REDUX_DEVTOOLS_EXTENSION__());
+
+
+const middleware = (0,redux__WEBPACK_IMPORTED_MODULE_3__.applyMiddleware)(redux_thunk__WEBPACK_IMPORTED_MODULE_1__.default);
+const enhancers = (0,redux_devtools_extension__WEBPACK_IMPORTED_MODULE_2__.composeWithDevTools)(middleware);
+const store = (0,redux__WEBPACK_IMPORTED_MODULE_3__.createStore)(_reducers_ToDoReducer__WEBPACK_IMPORTED_MODULE_0__.ToDoReducer, enhancers);
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (store);
 
 /***/ }),
@@ -202,8 +208,14 @@ const addTodo = todo => ({
   todo
 });
 
+const fetchTodos = () => ({
+  type: 'INIT_TO_DO_LIST',
+  todos: []
+});
+
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
-  addTodo
+  addTodo,
+  fetchTodos
 });
 
 /***/ }),
@@ -217,7 +229,8 @@ const addTodo = todo => ({
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "ToDoReducer": () => (/* binding */ ToDoReducer)
+/* harmony export */   "ToDoReducer": () => (/* binding */ ToDoReducer),
+/* harmony export */   "fetchTodos": () => (/* binding */ fetchTodos)
 /* harmony export */ });
 const initialState = {
   todos: []
@@ -227,9 +240,20 @@ const ToDoReducer = (state = initialState.todos, action) => {
     case 'ADD_TO_DO':
       return [...state, action.todo];
 
+    case 'INIT_TO_DO_LIST':
+      return action.todos;
+
     default:
       return state;
   }
+};
+const fetchTodos = () => async (dispatch, getState) => {
+  const response = await fetch('resources/myTodoList.json');
+  const todos = await response.json();
+  dispatch({
+    type: 'INIT_TO_DO_LIST',
+    todos: todos
+  });
 };
 
 /***/ }),
@@ -318,6 +342,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ });
 /* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! react */ "./node_modules/react/index.js");
 /* harmony import */ var react_redux__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! react-redux */ "./node_modules/react-redux/es/index.js");
+/* harmony import */ var _reducers_ToDoReducer__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../../reducers/ToDoReducer */ "./src/reducers/ToDoReducer.ts");
+
 
 
 
@@ -327,9 +353,21 @@ const mapStateToProps = state => {
   };
 };
 
+const mapDispatchToProps = dispatch => {
+  return {
+    initList: () => {
+      dispatch((0,_reducers_ToDoReducer__WEBPACK_IMPORTED_MODULE_2__.fetchTodos)());
+    }
+  };
+};
+
 const ListDisplayComponent = ({
-  items = []
+  items = [],
+  initList
 }) => {
+  react__WEBPACK_IMPORTED_MODULE_0__.useEffect(() => {
+    initList();
+  }, []);
   return /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("div", {
     id: "listOfItems"
   }, "emplacement pour ma future liste", items.map(item => {
@@ -337,7 +375,7 @@ const ListDisplayComponent = ({
   }));
 };
 
-/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ((0,react_redux__WEBPACK_IMPORTED_MODULE_1__.connect)(mapStateToProps, null)(ListDisplayComponent));
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ((0,react_redux__WEBPACK_IMPORTED_MODULE_1__.connect)(mapStateToProps, mapDispatchToProps)(ListDisplayComponent));
 
 /***/ }),
 
@@ -32951,6 +32989,73 @@ if (false) {} else {
   module.exports = __webpack_require__(/*! ./cjs/react.development.js */ "./node_modules/react/cjs/react.development.js");
 }
 
+
+/***/ }),
+
+/***/ "./node_modules/redux-devtools-extension/index.js":
+/*!********************************************************!*\
+  !*** ./node_modules/redux-devtools-extension/index.js ***!
+  \********************************************************/
+/***/ ((__unused_webpack_module, exports, __webpack_require__) => {
+
+"use strict";
+
+
+var compose = __webpack_require__(/*! redux */ "./node_modules/redux/es/redux.js").compose;
+
+exports.__esModule = true;
+exports.composeWithDevTools =
+  typeof window !== 'undefined' && window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__
+    ? window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__
+    : function () {
+        if (arguments.length === 0) return undefined;
+        if (typeof arguments[0] === 'object') return compose;
+        return compose.apply(null, arguments);
+      };
+
+exports.devToolsEnhancer =
+  typeof window !== 'undefined' && window.__REDUX_DEVTOOLS_EXTENSION__
+    ? window.__REDUX_DEVTOOLS_EXTENSION__
+    : function () {
+        return function (noop) {
+          return noop;
+        };
+      };
+
+
+/***/ }),
+
+/***/ "./node_modules/redux-thunk/es/index.js":
+/*!**********************************************!*\
+  !*** ./node_modules/redux-thunk/es/index.js ***!
+  \**********************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+function createThunkMiddleware(extraArgument) {
+  return function (_ref) {
+    var dispatch = _ref.dispatch,
+        getState = _ref.getState;
+    return function (next) {
+      return function (action) {
+        if (typeof action === 'function') {
+          return action(dispatch, getState, extraArgument);
+        }
+
+        return next(action);
+      };
+    };
+  };
+}
+
+var thunk = createThunkMiddleware();
+thunk.withExtraArgument = createThunkMiddleware;
+
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (thunk);
 
 /***/ }),
 
