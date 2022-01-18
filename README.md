@@ -1,4 +1,5 @@
-📣 https://github.com/arolla/first-react-app-tutorial/wiki/Commentaires
+📣 Vous trouverez ici les commentaire de ceux qui ont déjà fait le tuto (en attendant leur intégration au tuto)
+https://github.com/arolla/first-react-app-tutorial/wiki/Commentaires
 
 # Tutoriel 1 - Projet React simple
 
